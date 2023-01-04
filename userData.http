@@ -26,6 +26,6 @@ Content-Type: application/json
 
 {
   "username": "srikanth_sura",
-  "oldPassword": "srikanth@123",
-  "newPassword": "srikanth@456"
+  "oldPassword": "srikanth@456",
+  "newPassword": "srikanth@123"
 }

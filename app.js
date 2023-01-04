@@ -98,17 +98,24 @@ app.put("/change-password", async (request, response) => {
     `;
   const dbUser = await db.get(selectUserQuery);
 
-  const isPasswordMatched = await bcrypt.compare(oldPassword, dbUser.password);
-  if (isPasswordMatched !== true) {
+  if (dbUser === undefined) {
     response.status(400);
-    response.send("Invalid current password");
+    response.send("Invalid User");
   } else {
-    if (newPassword.length < 5) {
+    const isPasswordMatched = await bcrypt.compare(
+      oldPassword,
+      dbUser.password
+    );
+    if (isPasswordMatched !== true) {
       response.status(400);
-      response.send("Password is too short");
+      response.send("Invalid current password");
     } else {
-      const newHashedPassword = await bcrypt.hash(newPassword, 10);
-      const changePasswordQuery = `
+      if (newPassword.length < 5) {
+        response.status(400);
+        response.send("Password is too short");
+      } else {
+        const newHashedPassword = await bcrypt.hash(newPassword, 10);
+        const changePasswordQuery = `
               UPDATE
                   user
               SET
@@ -120,8 +127,9 @@ app.put("/change-password", async (request, response) => {
               WHERE
                   username = '${username}';
           `;
-      await db.run(changePasswordQuery);
-      response.send("Password updated");
+        await db.run(changePasswordQuery);
+        response.send("Password updated");
+      }
     }
   }
 });
